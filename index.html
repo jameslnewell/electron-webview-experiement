@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Browser</title>
+    <style>
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+
+      .toolbar {
+        display: flex;
+        border-bottom: 1px solid #ccc;
+      }
+
+      .back, .forward {
+      }
+
+      .address {
+        flex-grow: 1;
+        padding: 0.25em;
+        font-size: 0.8em;
+        font-family: sans-serif;
+        border: none;
+      }
+
+      .browser {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+      }
+
+    </style>
+  </head>
+  <body>
+
+    <div class="toolbar">
+      <button class="back">&lt;</button>
+      <button class="forward">&gt;</button>
+      <input class="address" disabled/>
+    </div>
+
+    <webview
+      class="browser"
+      src="./content/index.html"
+      useragent="understanding faith"
+    >
+    </webview>
+    <script>
+
+    const ipcRenderer = require('electron').ipcRenderer;
+    const webview = document.querySelector('.browser');
+    const address = document.querySelector('.address');
+
+    webview.addEventListener('dom-ready', function() {
+      webview.openDevTools();
+      document.title = 'Browser - '+webview.getTitle();
+      address.value = webview.getURL();
+    });
+
+    ipcRenderer.on('load-url', function(event, url) {
+      webview.src = url;
+    });
+
+    webview.addEventListener('new-window', function(event) {
+      ipcRenderer.send('open-window', event.url);
+    });
+
+    document.querySelector('.back').addEventListener('click', function() {
+      webview.goBack();
+    });
+
+    document.querySelector('.forward').addEventListener('click', function() {
+      webview.goForward();
+    });
+
+    </script>
+  </body>
+</html>

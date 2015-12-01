@@ -1,0 +1,10 @@
+{
+  "name": "browser-test",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron-prebuilt": "^0.35.2"
+  }
+}
